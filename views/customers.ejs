@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/cssfiles/customers.css" />
+    <title>customers</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway&family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <ul>
+      <li><a href="/"> Home</a></li>
+      <li><a href="#" class="active">Customers</a></li>
+      <li><a href="/transactions">Transactions</a></li>
+    </ul>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+    $(document).ready(() => {
+      fetch("/api/customers")
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          data.forEach((ele) => {
+            $("body").append(`<div class="customer">
+      <p>${ele.name}</p>
+      <div class="details">
+        <p>Balance: <span>${ele.balance}</span></p>
+        <p>Email: <span>${ele.email}</span></p>
+      </div>
+    </div>`);
+          });
+          $(" .customer > p").click((e) => {
+            $(e.target).toggleClass("show");
+            $(e.target).siblings().slideToggle();
+          });
+        });
+    });
+  </script>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/cssfiles/transactions.css" />
+    <title>customers</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway&family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <ul>
+      <li><a href="/"> Home</a></li>
+      <li><a href="/customers">Customers</a></li>
+      <li><a href="#" class="active">Transactions</a></li>
+    </ul>
+    <form id="transaction">
+      <h1>Make Transaction</h1>
+      <div class="field">
+        <p>From:-</p>
+        <select name="from" id="from" required="required">
+          <option value="">Select</option>
+          <option value="aman">Aman</option>
+          <option value="deepak">Deepak</option>
+          <option value="amit">Amit</option>
+          <option value="neha">neha</option>
+          <option value="mohit">Mohit</option>
+          <option value="abhinandan">Abhinandan</option>
+          <option value="anshul">Anshul</option>
+          <option value="bharat">Bharat</option>
+          <option value="aayush">Aayush</option>
+          <option value="lee">lee</option>
+        </select>
+      </div>
+      <div class="field">
+        <p>To:-</p>
+        <select name="to" id="to" required="required">
+          <option value="">Select</option>
+          <option value="aman">Aman</option>
+          <option value="deepak">Deepak</option>
+          <option value="amit">Amit</option>
+          <option value="neha">neha</option>
+          <option value="mohit">Mohit</option>
+          <option value="abhinandan">Abhinandan</option>
+          <option value="anshul">Anshul</option>
+          <option value="bharat">Bharat</option>
+          <option value="aayush">Aayush</option>
+          <option value="lee">lee</option>
+        </select>
+      </div>
+      <div class="field">
+        <p>Card:-</p>
+        <select name="card" id="card" required="required">
+          <option value="">Select</option>
+          <option value="Credit">Credit</option>
+          <option value="Debit">Debit</option>
+        </select>
+      </div>
+      <div class="field">
+        <p>Amount:-</p>
+        <input type="text" name="amount" required="required" />
+      </div>
+      <div class="field">
+        <input type="submit" />
+      </div>
+    </form>
+    <table>
+      <h1 class="history">Transactions History</h1>
+      <tr>
+        <th>From</th>
+        <th>To</th>
+        <th>Card</th>
+        <th>Amount</th>
+      </tr>
+    </table>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+    $(document).ready(() => {
+      let customers;
+      let customer;
+
+      fetch("/api/customers")
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          customers = data;
+        });
+
+      $("form").submit((e) => {
+        e.preventDefault();
+        customers.forEach((ele) => {
+          if (ele.name === e.target.from.value) {
+            customer = ele;
+          }
+        });
+
+        if (e.target.from.value === e.target.to.value) {
+          alert("Transaction to yourself can't be done.");
+        } else if (Number(e.target.amount.value) < 0) {
+          alert("Sorry..you can,t pay negative amount.");
+        } else if (Number(e.target.amount.value) > customer.balance) {
+          alert(
+            `  This transaction exceeding ${e.target.from.value}'s balance(${customer.balance}).  `
+          );
+        } else {
+          fetch("/add", {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              from: e.target.from.value,
+              to: e.target.to.value,
+              card: e.target.card.value,
+              amount: Number(e.target.amount.value),
+            }),
+          })
+            .then((response) => response.json())
+            .then((res) => {
+              $("table").append(` <tr>
+        <td>${e.target.from.value}</td>
+        <td>${e.target.to.value}</td>
+        <td>${e.target.card.value}</td>
+        <td>${e.target.amount.value}</td>
+      </tr>`);
+              alert("Transaction is Successful");
+            });
+        }
+      });
+      fetch("/api/transactions")
+        .then((response) => response.json())
+        .then((data) => {
+          data.forEach((ele) => {
+            $("table").append(`     <tr>
+        <td>${ele.from}</td>
+        <td>${ele.to}</td>
+        <td>${ele.card}</td>
+        <td>${ele.amount}</td>
+      </tr>`);
+          });
+        });
+    });
+  </script>
+</html>
