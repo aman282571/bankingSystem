@@ -12,3 +12,4 @@ While transacting there are some checks like:-
 2. You can't transact negative amount.
 
 3. You can't transact amount greater then your balance.
+4. <a href="http://basicbanksys.herokuapp.com">Click</a> here to view this website.
